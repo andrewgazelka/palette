@@ -9,8 +9,8 @@ mod tests {
     fn test_paletted_container_single() {
         let mut container = PalettedContainer::Single(BlockState(1));
 
-        assert_eq!(*container.get(0), BlockState(1));
-        assert_eq!(*container.get(BLOCKS_PER_SECTION - 1), BlockState(1));
+        assert_eq!(*container.get_unchecked(0), BlockState(1));
+        assert_eq!(*container.get_unchecked(BLOCKS_PER_SECTION - 1), BlockState(1));
 
         // Setting the same value shouldn't change the container type
         container.set(42, BlockState(1));
@@ -27,8 +27,8 @@ mod tests {
         container.set(0, BlockState(2)); // This should upgrade to Indirect
 
         assert!(matches!(container, PalettedContainer::Indirect(_)));
-        assert_eq!(*container.get(0), BlockState(2));
-        assert_eq!(*container.get(1), BlockState(1));
+        assert_eq!(*container.get_unchecked(0), BlockState(2));
+        assert_eq!(*container.get_unchecked(1), BlockState(1));
 
         // Fill the indirect container
         for i in 0..16 {
@@ -49,7 +49,7 @@ mod tests {
         }
 
         for i in 0..BLOCKS_PER_SECTION {
-            assert_eq!(*container.get(i), BlockState(i as u16));
+            assert_eq!(*container.get_unchecked(i), BlockState(i as u16));
         }
     }
 
@@ -57,6 +57,6 @@ mod tests {
     #[should_panic]
     fn test_paletted_container_out_of_bounds() {
         let container = PalettedContainer::Single(BlockState(0));
-        container.get(BLOCKS_PER_SECTION);
+        container.get_unchecked(BLOCKS_PER_SECTION);
     }
 }

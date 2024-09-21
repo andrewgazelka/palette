@@ -63,13 +63,11 @@ impl<T: PartialEq + Copy> PalettedContainer<T> {
         }
     }
 
-    pub fn get(&self, index: usize) -> &T {
-        debug_assert_lt!(index, BLOCKS_PER_SECTION);
-
+    pub unsafe fn get_unchecked(&self, index: usize) -> &T {
         match self {
             Self::Single(current) => current,
-            Self::Indirect(indirect) => indirect.get(index),
-            Self::Direct(direct) => &direct[index],
+            Self::Indirect(indirect) => indirect.get_unchecked(index),
+            Self::Direct(direct) => direct.get_unchecked(index),
         }
     }
 }

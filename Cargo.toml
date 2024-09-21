@@ -26,9 +26,14 @@ cast_possible_truncation = "allow"
 
 
 [dev-dependencies]
+divan = "0.1.14"
 rand = "0.8.5"
 tango-bench = "0.6.0"
 
+#[[bench]]
+#name = "paletted_container"
+#harness = false
+
 [[bench]]
-name = "paletted_container"
+name = "full"
 harness = false

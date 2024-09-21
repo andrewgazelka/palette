@@ -1,7 +1,5 @@
-use crate::vec_u4::VecU4;
-use crate::BLOCKS_PER_SECTION;
+use crate::vec_u4::ArrayU4;
 use arrayvec::ArrayVec;
-use more_asserts::debug_assert_lt;
 
 pub enum IndirectIndexError {
     Full,
@@ -10,7 +8,7 @@ pub enum IndirectIndexError {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Indirect<T> {
     palette: ArrayVec<T, 16>,
-    elements: VecU4,
+    elements: ArrayU4,
 }
 
 impl<T> Indirect<T> {
@@ -20,7 +18,7 @@ impl<T> Indirect<T> {
 
         Self {
             palette,
-            elements: VecU4::zeroed(4096),
+            elements: ArrayU4::zeroed(4096),
         }
     }
 }
@@ -45,11 +43,14 @@ impl<T: PartialEq> Indirect<T> {
         Ok(())
     }
 
-    pub fn get(&self, index: usize) -> &T {
-        debug_assert_lt!(index, BLOCKS_PER_SECTION);
+    pub unsafe fn get_unchecked(&self, index: usize) -> &T {
+        let palette_index = unsafe { self.elements.get_unchecked(index) };
+        unsafe { self.palette.get_unchecked(palette_index as usize) }
+    }
 
-        let value = self.elements.get(index).unwrap();
-        &self.palette[value as usize]
+    pub fn get(&self, index: usize) -> Option<&T> {
+        let palette_index = self.elements.get(index)?;
+        Some(unsafe { self.palette.get_unchecked(palette_index as usize) })
     }
 
     fn find_index(&self, element: &T) -> Option<u8> {

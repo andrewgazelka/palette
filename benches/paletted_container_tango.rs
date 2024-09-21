@@ -51,7 +51,7 @@ fn bench_get() -> impl IntoBenchmarks {
             let container = PalettedContainer::Single(BlockState(42));
             let mut index = 0;
             b.iter(move || {
-                let _ = container.get(index);
+                let _ = container.get_unchecked(index);
                 index = (index + 1) % BLOCKS_PER_SECTION;
             })
         }),
@@ -62,7 +62,7 @@ fn bench_get() -> impl IntoBenchmarks {
             }
             let mut index = 0;
             b.iter(move || {
-                let _ = container.get(index);
+                let _ = container.get_unchecked(index);
                 index = (index + 1) % BLOCKS_PER_SECTION;
             })
         }),
@@ -70,7 +70,7 @@ fn bench_get() -> impl IntoBenchmarks {
             let container = PalettedContainer::Direct(blockstates.to_vec());
             let mut index = 0;
             b.iter(move || {
-                let _ = container.get(index);
+                let _ = container.get_unchecked(index);
                 index = (index + 1) % BLOCKS_PER_SECTION;
             })
         }),
