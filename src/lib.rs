@@ -11,9 +11,9 @@ pub const BLOCKS_PER_SECTION: usize = 16 * 16 * 16;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum PalettedContainer<T> {
-    Single(T),
-    Indirect(Indirect<T>),
-    Direct(Vec<T>),
+    Single(T), // 2 bytes
+    Indirect(Indirect<T>), // 2 * 16 bytes + 0.5 * 4096 bytes = 2080 bytes
+    Direct(Vec<T>), // 2 * 4096 bytes = 8192 bytes
 }
 
 impl<T: Copy> PalettedContainer<T> {

@@ -36,9 +36,9 @@ impl<T: PartialEq> Indirect<T> {
         }
 
         let palette_index = self.palette.len();
-        self.palette.push(element);
+        unsafe { self.palette.push_unchecked(element) };
 
-        self.elements.set(index, palette_index as u8).unwrap();
+        unsafe { self.elements.set_unchecked(index, palette_index as u8) };
 
         Ok(())
     }

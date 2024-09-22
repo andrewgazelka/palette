@@ -26,11 +26,8 @@ fn set_single(bencher: Bencher, size: usize) {
 fn set_indirect(bencher: Bencher, size: usize) {
     bencher.counter(size).bench(|| {
         let mut container = PalettedContainer::Single(BlockState(0));
-        for i in 0..16 {
-            container.set(i, BlockState(i as u16));
-        }
         for i in 0..size {
-            container.set(i % BLOCKS_PER_SECTION, BlockState((i % 16) as u16));
+            container.set(i, BlockState(i as u16));
         }
     });
 }
@@ -42,9 +39,6 @@ fn set_direct(bencher: Bencher, size: usize) {
         for i in 0..BLOCKS_PER_SECTION {
             container.set(i, BlockState(i as u16));
         }
-        for i in 0..size {
-            container.set(i % BLOCKS_PER_SECTION, BlockState((i % 256) as u16));
-        }
     });
 }
 
@@ -53,7 +47,7 @@ fn get_single(bencher: Bencher, size: usize) {
     let container = PalettedContainer::Single(BlockState(42));
     bencher.counter(size).bench(|| {
         for i in 0..size {
-            black_box(container.get_unchecked(i % BLOCKS_PER_SECTION));
+            black_box(unsafe { container.get_unchecked(i % BLOCKS_PER_SECTION) });
         }
     });
 }
@@ -66,7 +60,7 @@ fn get_indirect(bencher: Bencher, size: usize) {
     }
     bencher.counter(size).bench(|| {
         for i in 0..size {
-            black_box(container.get_unchecked(i));
+            black_box(unsafe { container.get_unchecked(i) });
         }
     });
 }
@@ -79,7 +73,7 @@ fn get_direct(bencher: Bencher, size: usize) {
     }
     bencher.counter(size).bench(|| {
         for i in 0..size {
-            black_box(container.get_unchecked(i % BLOCKS_PER_SECTION));
+            black_box(unsafe { container.get_unchecked(i % BLOCKS_PER_SECTION) });
         }
     });
 }
